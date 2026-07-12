@@ -1,0 +1,10 @@
+class PredictionError(Exception):
+    """Erreur générale de prédiction."""
+
+
+class InvalidOriginError(PredictionError):
+    """Origine invalide."""
+
+
+class ModelNotLoadedError(PredictionError):
+    """Le modèle TensorFlow n'a pas pu être chargé."""
