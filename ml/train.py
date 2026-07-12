@@ -61,15 +61,12 @@ def build_model(normalizer):
 # ------------------------------------------------------------------
 
 def compile_model(model):
-    """
-    Compile le modèle.
-    """
 
     model.compile(
         optimizer=tf.keras.optimizers.Adam(
-            learning_rate=0.1,
+            learning_rate=0.01,
         ),
-        loss="mean_absolute_error",
+        loss="mse",
         metrics=[
             "mae",
         ],

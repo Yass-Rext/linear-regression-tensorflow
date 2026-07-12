@@ -6,6 +6,8 @@ from django.shortcuts import render
 from ml.predictor import predictor
 from ml.schemas import CarFeatures
 
+from ml.exceptions import PredictionError
+
 from .forms import PredictionForm
 
 
@@ -31,8 +33,10 @@ def home(request):
                 model_year=form.cleaned_data["model_year"],
                 origin=form.cleaned_data["origin"],
             )
-
-            prediction = predictor.predict(car)
+            try:
+                prediction = predictor.predict(car)
+            except PredictionError as e:
+                form.add_error(None, str(e))
 
     else:
 

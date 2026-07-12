@@ -29,13 +29,15 @@ class PredictionForm(forms.Form):
     )
 
     horsepower = forms.FloatField(
-        label="Puissance",
-        widget=forms.NumberInput(
-            attrs={
-                "class": "form-control",
-            }
-        ),
-    )
+    label="Puissance",
+    widget=forms.NumberInput(
+        attrs={
+            "class": "form-control",
+            "step": "0.1",
+            "placeholder": "Ex : 130",
+        }
+    ),
+   )
 
     weight = forms.FloatField(
         label="Poids",

@@ -103,7 +103,27 @@ def encode_origin(dataset: pd.DataFrame) -> pd.DataFrame:
         columns=["Origin"],
         prefix="",
         prefix_sep="",
-        dtype=int,
+        dtype=float,
+    )
+
+    # Garantit la présence des 3 colonnes
+    for column in ["USA", "Europe", "Japan"]:
+        if column not in dataset.columns:
+            dataset[column] = 0.0
+
+    dataset = dataset.reindex(
+        columns=[
+            "MPG",
+            "Cylinders",
+            "Displacement",
+            "Horsepower",
+            "Weight",
+            "Acceleration",
+            "Model Year",
+            "USA",
+            "Europe",
+            "Japan",
+        ]
     )
 
     return dataset
@@ -192,6 +212,11 @@ def prepare_data():
     normalizer = build_normalizer(
         train_features
     )
+    
+    print("\nColonnes utilisées :")
+    print(train_features.columns.tolist())
+
+    print("\nShape :", train_features.shape)
 
     return (
         train_features,

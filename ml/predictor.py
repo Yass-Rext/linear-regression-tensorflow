@@ -1,16 +1,16 @@
-"""
-Service de prédiction TensorFlow.
-"""
-
 from pathlib import Path
 import pickle
 
 import pandas as pd
 import tensorflow as tf
 
-from .exceptions import InvalidOriginError
-from .schemas import CarFeatures
+from .exceptions import (
+    InvalidOriginError,
+    ModelNotLoadedError,
+)
 
+from .schemas import CarFeatures
+    
 
 BASE_DIR = Path(__file__).parent
 
@@ -22,9 +22,6 @@ FEATURE_COLUMNS_PATH = MODEL_DIR / "feature_columns.pkl"
 
 
 class RegressionPredictor:
-    """
-    Service de prédiction.
-    """
 
     VALID_ORIGINS = (
         "USA",
@@ -43,75 +40,82 @@ class RegressionPredictor:
 
     def __init__(self):
 
-        if not MODEL_PATH.exists():
-            raise FileNotFoundError(
-                f"Le modèle est introuvable : {MODEL_PATH}"
+        self.model = None
+
+        self.feature_columns = None
+
+    def _load(self):
+
+        if self.model is None:
+
+            if not MODEL_PATH.exists():
+
+                raise ModelNotLoadedError(
+                    f"Le modèle est introuvable : {MODEL_PATH}"
+                )
+
+            self.model = tf.keras.models.load_model(
+                MODEL_PATH
             )
 
-        if not FEATURE_COLUMNS_PATH.exists():
-            raise FileNotFoundError(
-                f"Le fichier des colonnes est introuvable : {FEATURE_COLUMNS_PATH}"
-            )
+        if self.feature_columns is None:
 
-        self.model = tf.keras.models.load_model(
-            MODEL_PATH
-        )
+            if not FEATURE_COLUMNS_PATH.exists():
 
-        with open(
-            FEATURE_COLUMNS_PATH,
-            "rb",
-        ) as file:
+                raise ModelNotLoadedError(
+                    f"Le fichier des colonnes est introuvable : {FEATURE_COLUMNS_PATH}"
+                )
 
-            self.feature_columns = pickle.load(file)
+            with open(
+                FEATURE_COLUMNS_PATH,
+                "rb",
+            ) as file:
+
+                self.feature_columns = pickle.load(file)
 
     def _prepare_input(
         self,
         car: CarFeatures,
     ) -> pd.DataFrame:
-        """
-        Prépare les données pour TensorFlow.
-        """
 
         if car.origin not in self.VALID_ORIGINS:
+
             raise InvalidOriginError(
                 f"Origine invalide : {car.origin}"
             )
 
         sample = {
-            column: 0
+            column: 0.0
             for column in self.feature_columns
         }
 
         for column, attribute in self.NUMERIC_MAPPING.items():
-            sample[column] = getattr(
-                car,
-                attribute,
+
+            sample[column] = float(
+                getattr(car, attribute)
             )
 
-        sample[car.origin] = 1
+        sample[car.origin] = 1.0
 
-        return pd.DataFrame([sample])
+        df = pd.DataFrame([sample])
+
+        df = df[self.feature_columns]
+
+        return df
 
     def predict(
         self,
         car: CarFeatures,
     ) -> float:
-        """
-        Effectue une prédiction.
-        """
 
-        sample = self._prepare_input(
-            car
-        )
+        self._load()
 
         prediction = self.model.predict(
-            sample,
+            self._prepare_input(car),
             verbose=0,
         )
 
-        return float(
-            prediction[0][0]
-        )
+        return float(prediction[0][0])
 
 
 predictor = RegressionPredictor()
