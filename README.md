@@ -1,38 +1,126 @@
 # 🚗 Linear Regression Prediction with TensorFlow & Django
 
-## 📖 Description
+![Python](https://img.shields.io/badge/Python-3.13-blue)
+![Django](https://img.shields.io/badge/Django-6.0-green)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange)
+![uv](https://img.shields.io/badge/Package_Manager-uv-purple)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-Ce projet est une application web développée avec **Django** et **TensorFlow** permettant de prédire la consommation de carburant (**MPG - Miles Per Gallon**) d'un véhicule à partir de ses caractéristiques techniques.
+---
 
-L'utilisateur saisit les informations d'une voiture dans un formulaire web. Ces informations sont ensuite transmises à un modèle de Machine Learning entraîné avec TensorFlow afin de produire une prédiction.
+# 📖 Description
 
-L'objectif principal de ce projet est de démontrer l'intégration d'un modèle de Machine Learning dans une application web Django tout en respectant une architecture logicielle propre.
+**Linear Regression Prediction with TensorFlow & Django** est une application Web développée en Python qui démontre l'intégration d'un modèle de Machine Learning dans une application Django.
+
+Le projet permet à un utilisateur de saisir les caractéristiques d'un véhicule via une interface Web.
+
+Les données sont ensuite transmises à un modèle de régression linéaire développé avec **TensorFlow/Keras**, qui estime la consommation de carburant (**MPG - Miles Per Gallon**).
+
+L'objectif principal du projet est de montrer comment intégrer proprement un modèle de Machine Learning dans une application Web moderne tout en respectant une architecture logicielle claire et maintenable.
 
 ---
 
 # ✨ Fonctionnalités
 
-- Interface web avec Django
-- Formulaire de saisie des caractéristiques d'un véhicule
+- Interface Web développée avec Django
+- Formulaire de saisie ergonomique
 - Validation des données utilisateur
-- Chargement automatique d'un modèle TensorFlow entraîné
+- Chargement paresseux (Lazy Loading) du modèle TensorFlow
 - Prédiction en temps réel
-- Affichage du résultat dans l'interface web
+- Affichage du résultat dans l'interface
 - Architecture modulaire
-- Séparation entre la logique Django et la logique Machine Learning
+- Séparation entre la logique métier et la logique Machine Learning
+- Déploiement sur AWS EC2
+- Utilisation de Gunicorn et Nginx
+
+---
+
+# 🎯 Objectifs pédagogiques
+
+Ce projet couvre plusieurs domaines :
+
+- Développement Web avec Django
+- Machine Learning avec TensorFlow
+- Prétraitement des données
+- Régression Linéaire
+- Déploiement Linux
+- Administration système
+- Architecture logicielle
+- DevOps
 
 ---
 
 # 🛠 Technologies utilisées
 
-- Python 3.13
-- Django 6
-- TensorFlow / Keras
-- Pandas
-- NumPy
-- Scikit-Learn
-- Bootstrap 5
-- uv (gestionnaire d'environnement Python)
+| Technologie | Utilisation |
+|-------------|------------|
+| Python 3.13 | Langage principal |
+| Django 6 | Framework Web |
+| TensorFlow | Machine Learning |
+| Keras | Construction du modèle |
+| Pandas | Manipulation des données |
+| NumPy | Calcul scientifique |
+| Scikit-Learn | Découpage Train/Test |
+| Gunicorn | Serveur WSGI |
+| Nginx | Reverse Proxy |
+| uv | Gestionnaire d'environnement Python |
+| AWS EC2 | Déploiement |
+
+---
+
+# 🏗 Architecture générale
+
+```
+                       Utilisateur
+
+                            │
+
+                            ▼
+
+                  Navigateur Web
+
+                            │
+
+                            ▼
+
+                         Nginx
+
+                            │
+
+                            ▼
+
+                     Gunicorn WSGI
+
+                            │
+
+                            ▼
+
+                         Django
+
+                            │
+
+                            ▼
+
+                  RegressionPredictor
+
+                            │
+
+                            ▼
+
+                   TensorFlow / Keras
+
+                            │
+
+                            ▼
+
+                     model.keras
+
+                            │
+
+                            ▼
+
+                   Valeur prédite (MPG)
+```
 
 ---
 
@@ -40,18 +128,24 @@ L'objectif principal de ce projet est de démontrer l'intégration d'un modèle 
 
 ```
 linear-regression-tensorflow/
+
 │
-├── config/                 # Configuration Django
+
+├── config/
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── asgi.py
 │
-├── predictor/              # Application Django
+├── predictor/
+│   ├── templates/
 │   ├── forms.py
 │   ├── views.py
 │   ├── urls.py
-│   └── templates/
+│   └── admin.py
 │
-├── ml/                     # Bibliothèque Machine Learning
+├── ml/
 │   ├── data/
-│   │   └── auto-mpg.csv
 │   │
 │   ├── saved_models/
 │   │   ├── model.keras
@@ -59,108 +153,129 @@ linear-regression-tensorflow/
 │   │
 │   ├── preprocessing.py
 │   ├── predictor.py
+│   ├── train.py
 │   ├── schemas.py
-│   ├── exceptions.py
-│   └── train.py
+│   └── exceptions.py
 │
 ├── static/
+│
 ├── manage.py
+│
 ├── pyproject.toml
+│
 └── README.md
 ```
 
 ---
 
-# 🏗 Architecture générale
+# 🚀 Fonctionnement global
+
+Le cycle complet est le suivant :
 
 ```
-                 Utilisateur
+Utilisateur
 
-                       │
+↓
 
-                       ▼
+Formulaire Django
 
-               Formulaire Django
+↓
 
-                       │
+Validation
 
-                       ▼
+↓
 
-                Validation Django
+Création de CarFeatures
 
-                       │
+↓
 
-                       ▼
+RegressionPredictor
 
-                  CarFeatures
+↓
 
-                       │
+Préparation des données
 
-                       ▼
+↓
 
-            RegressionPredictor
+TensorFlow
 
-                       │
+↓
 
-                       ▼
+Prédiction
 
-              TensorFlow (Keras)
+↓
 
-                       │
+Retour vers Django
 
-                       ▼
+↓
 
-                 Modèle entraîné
-
-                       │
-
-                       ▼
-
-                 Valeur prédite
-
-                       │
-
-                       ▼
-
-                 Interface HTML
+Affichage du résultat
 ```
 
 ---
 
 # 📊 Dataset
 
-Le projet utilise le célèbre dataset **Auto MPG**.
+Le projet utilise le célèbre dataset :
+
+**Auto MPG Dataset**
 
 Variables utilisées :
 
 | Variable | Description |
-|----------|-------------|
+|-----------|------------|
 | Cylinders | Nombre de cylindres |
 | Displacement | Cylindrée |
 | Horsepower | Puissance |
 | Weight | Poids |
 | Acceleration | Accélération |
-| Model Year | Année du modèle |
+| Model Year | Année |
 | Origin | Pays d'origine |
 
 Variable cible :
 
 ```
-MPG (Miles Per Gallon)
+MPG
 ```
 
 ---
 
-# 🧹 Prétraitement des données
+# 🧠 Modèle de Machine Learning
 
-Le pipeline de préparation effectue :
+Le modèle est constitué de seulement deux couches :
 
-- Chargement du dataset
+```
+Normalization
+
+↓
+
+Dense(1)
+```
+
+Optimizer :
+
+```
+Adam
+```
+
+Loss :
+
+```
+Mean Absolute Error
+```
+
+---
+
+# 🧹 Prétraitement
+
+Le pipeline réalise automatiquement :
+
+- Chargement du CSV
+- Nettoyage des données
 - Suppression des valeurs manquantes
 - Encodage One-Hot de l'origine
-- Séparation Features / Labels
-- Découpage Train/Test
-- Création d'une couche de normalisation TensorFlow
+- Train/Test Split
+- Création du Normalizer TensorFlow
 
 Pipeline :
 
@@ -169,15 +284,15 @@ CSV
 
 ↓
 
-Chargement
+Pandas
 
 ↓
 
-Nettoyage
+Cleaning
 
 ↓
 
-One-Hot Encoding
+Encoding
 
 ↓
 
@@ -194,29 +309,9 @@ TensorFlow
 
 ---
 
-# 🧠 Modèle de Machine Learning
+# ⚙ Installation locale
 
-Le modèle est un réseau de neurones très simple composé de :
-
-```
-Normalization
-
-↓
-
-Dense(1)
-```
-
-Compilation :
-
-- Optimizer : Adam
-- Loss : Mean Squared Error (MSE)
-- Metric : Mean Absolute Error (MAE)
-
----
-
-# 🚀 Installation
-
-## 1. Cloner le projet
+## Cloner
 
 ```bash
 git clone https://github.com/<username>/linear-regression-tensorflow.git
@@ -226,7 +321,15 @@ cd linear-regression-tensorflow
 
 ---
 
-## 2. Installer les dépendances
+## Installer uv
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+---
+
+## Installer les dépendances
 
 ```bash
 uv sync
@@ -234,46 +337,36 @@ uv sync
 
 ---
 
-## 3. Entraîner le modèle
+## Entraîner le modèle
 
 ```bash
 uv run python -m ml.train
 ```
 
-Cette commande génère :
-
-```
-ml/saved_models/
-
-model.keras
-
-feature_columns.pkl
-```
-
 ---
 
-## 4. Lancer Django
+## Lancer Django
 
 ```bash
+uv run python manage.py migrate
+
 uv run python manage.py runserver
 ```
 
-Puis ouvrir :
-
-```
-http://127.0.0.1:8000
-```
-
 ---
 
-# 🖥 Déploiement
+# ☁ Déploiement
 
-Le projet est conçu pour être déployé sur un serveur Linux.
+Le projet est prévu pour fonctionner sur une instance Linux sans interface graphique.
 
-Architecture cible :
+Architecture de production :
 
 ```
 Internet
+
+↓
+
+Port 80
 
 ↓
 
@@ -285,6 +378,10 @@ Gunicorn
 
 ↓
 
+Socket Unix
+
+↓
+
 Django
 
 ↓
@@ -292,152 +389,64 @@ Django
 TensorFlow
 ```
 
----
+Le socket Unix est créé dans :
 
-# 📁 Description du dossier ml
-
-## preprocessing.py
-
-Préparation des données :
-
-- Chargement
-- Nettoyage
-- Encodage
-- Train/Test Split
-- Normalisation
-
----
-
-## train.py
-
-Responsable de :
-
-- Construire le modèle
-- Compiler le modèle
-- Entraîner
-- Évaluer
-- Sauvegarder
-
----
-
-## predictor.py
-
-Responsable de :
-
-- Charger le modèle
-- Préparer une observation
-- Effectuer une prédiction
-
----
-
-## schemas.py
-
-Décrit les objets métier utilisés par le projet.
-
-Exemple :
-
-```python
-CarFeatures
+```
+/run/gunicorn/
 ```
 
 ---
 
-## exceptions.py
+# 🔒 Sécurité
 
-Contient les exceptions personnalisées.
-
-Exemple :
-
-```python
-ModelNotLoadedError
-
-InvalidOriginError
-```
+- Reverse Proxy Nginx
+- Gunicorn isolé
+- Validation Django Forms
+- Validation métier via `CarFeatures`
+- Exceptions personnalisées
+- Socket Unix au lieu d'un port TCP interne
 
 ---
 
-# 🔄 Cycle de vie complet
+# 📚 Documentation
 
-```
-Dataset
+Une documentation détaillée est disponible :
 
-↓
-
-Prétraitement
-
-↓
-
-Entraînement
-
-↓
-
-Sauvegarde
-
-↓
-
-model.keras
-
-↓
-
-Application Django
-
-↓
-
-Chargement
-
-↓
-
-Prédiction
-
-↓
-
-Affichage
-```
+- ARCHITECTURE.md
+- ML.md
+- DJANGO.md
+- DEPLOYMENT.md
+- API.md
+- CONTRIBUTING.md
+- FAQ.md
 
 ---
 
-# 📚 Concepts Machine Learning abordés
+# 📈 Améliorations futures
 
-- Régression linéaire
-- TensorFlow
-- Keras
-- Normalisation
-- One-Hot Encoding
-- Train/Test Split
-- Data Preprocessing
-- Lazy Loading
-- Data Validation
-
----
-
-# 💡 Améliorations possibles
-
-- API REST avec Django REST Framework
-- Dockerisation
-- Gunicorn + Nginx
-- HTTPS avec Let's Encrypt
-- Interface graphique améliorée
-- Journalisation (Logging)
+- API REST (Django REST Framework)
+- Docker
+- Docker Compose
+- Kubernetes
+- CI/CD GitHub Actions
 - Tests unitaires
-- Pipeline CI/CD
-- Support de plusieurs modèles
+- Tests d'intégration
+- HTTPS avec Let's Encrypt
+- Authentification utilisateur
+- Historique des prédictions
+- Plusieurs modèles TensorFlow
 
 ---
 
 # 👨‍💻 Auteur
+- Mamadou Yassarou Diallo
 
 Projet réalisé dans le cadre de l'apprentissage de l'intégration du Machine Learning avec Django.
-
-Technologies principales :
-
-- Django
-- TensorFlow
-- Python
-- Bootstrap
-- Scikit-Learn
 
 ---
 
 # 📄 Licence
 
-Projet réalisé à des fins pédagogiques.
+Ce projet est distribué sous licence MIT.
+
+Voir le fichier LICENSE.
